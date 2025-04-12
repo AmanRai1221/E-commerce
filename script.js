@@ -13,39 +13,124 @@ if (close) {
   })
 }
 
-// const addCartButton = document.querySelectorAll('.add-cart');
+// Cart functionality
 
-// addCartButton.forEach(button => {
-//   button.addEventListener('click', event => {
-//     const productBox = event.target.closest('.pro');
-//     addToCart(productBox);
-//   });
-// });
+document.addEventListener('DOMContentLoaded', function() {
+    // Initialize cart if not exists
+    if (!localStorage.getItem('cart')) {
+        localStorage.setItem('cart', JSON.stringify([]));
+    }
 
-// const cartContent = document.querySelector('.pro');
-// const addToCart = productBox => {
-//   const productImgSrc = productBox.querySelector('img').src;
-//   const productTitle = productBox.querySelector('.product-title').textContent;
-//   const productPrice = productBox.querySelector('.price').textContent;
+    // Add to cart buttons event listeners
+    for (let i = 1; i <= 16; i++) {
+        const btn = document.getElementById(`cbtn${i}`);
+        if (btn) {
+            btn.addEventListener('click', function(e) {
+                e.preventDefault();
+                addToCart(this);
+            });
+        }
+    }
 
-//   const cartBox = document.createElement('div');
-//   cartBox.classList.add('cart-box');
-//   cartBox.innerHTML = `
-//   < img src = "${productImgSrc}" alt = "" >
-//     <div class="des">
-//     <span>adidas</span>
-//     <h5 class="product-title">${productTitle}</h5>
-//     <div class="star">
-//     <i class="fa-solid fa-star"></i>
-//     <i class="fa-solid fa-star"></i>
-//     <i class="fa-solid fa-star"></i>
-//     <i class="fa-solid fa-star"></i>
-//     <i class="fa-solid fa-star"></i>
-//     </div>
-//     <h4 class="price">${productPrice}</h4>
-//     </div>
-//     <a href="#"><i class="fa-solid fa-cart-shopping cart add-cart"></i></a>
-//   `;
+    // Load cart items on cart page
+    if (document.getElementById('cart')) {
+        loadCartItems();
+    }
+});
 
-//   cartContent.appendChild(cartBox);
-// };
+function addToCart(button) {
+    const productDiv = button.closest('.pro');
+    const product = {
+        image: productDiv.querySelector('img').src.split('/').pop(),
+        name: productDiv.querySelector('h5').textContent,
+        price: productDiv.querySelector('h4').textContent,
+        quantity: 1
+    };
+
+    let cart = JSON.parse(localStorage.getItem('cart'));
+    // Compare both name and image to uniquely identify products
+    const existingItem = cart.find(item => 
+        item.name === product.name && 
+        item.image === product.image
+    );
+    
+    if (existingItem) {
+        existingItem.quantity += 1;
+    } else {
+        cart.push(product);
+    }
+
+    localStorage.setItem('cart', JSON.stringify(cart));
+    alert('Product added to cart!');
+}
+
+function loadCartItems() {
+    const cart = JSON.parse(localStorage.getItem('cart'));
+    const tbody = document.querySelector('#cart table tbody');
+    tbody.innerHTML = ''; // Clear existing items
+
+    let subtotal = 0;
+
+    cart.forEach(item => {
+        const row = document.createElement('tr');
+        const priceNum = parseInt(item.price.replace(/\D/g, ''));
+        const rowSubtotal = priceNum * item.quantity;
+        subtotal += rowSubtotal;
+
+        row.innerHTML = `
+            <td><a href="#" class="remove-item"><i class="fa-regular fa-circle-xmark"></i></a></td>
+            <td><img src="img/product/${item.image}"></td>
+            <td>${item.name}</td>
+            <td>${item.price}</td>
+            <td><input type="number" value="${item.quantity}" min="1" class="quantity-input"></td>
+            <td>Rs. ${rowSubtotal}</td>
+        `;
+        tbody.appendChild(row);
+    });
+
+    // Update subtotal
+    document.querySelector('#subtotal td:last-child').textContent = `Rs. ${subtotal}`;
+    document.querySelector('#subtotal strong:last-child').textContent = `Rs. ${subtotal}`;
+
+    // Add event listeners for quantity changes and remove buttons
+    document.querySelectorAll('.quantity-input').forEach(input => {
+        input.addEventListener('change', updateCartItem);
+    });
+
+    document.querySelectorAll('.remove-item').forEach(btn => {
+        btn.addEventListener('click', removeCartItem);
+    });
+}
+
+function updateCartItem(e) {
+    const newQuantity = parseInt(e.target.value);
+    const row = e.target.closest('tr');
+    const itemName = row.querySelector('td:nth-child(3)').textContent;
+    
+    let cart = JSON.parse(localStorage.getItem('cart'));
+    const itemIndex = cart.findIndex(item => item.name === itemName);
+    
+    if (itemIndex !== -1) {
+        cart[itemIndex].quantity = newQuantity;
+        localStorage.setItem('cart', JSON.stringify(cart));
+        loadCartItems(); // Refresh cart display
+    }
+}
+
+function removeCartItem(e) {
+    e.preventDefault();
+    const row = e.target.closest('tr');
+    const itemName = row.querySelector('td:nth-child(3)').textContent;
+    const itemImage = row.querySelector('td:nth-child(2) img').src.split('/').pop();
+    
+    let cart = JSON.parse(localStorage.getItem('cart'));
+    cart = cart.filter(item => 
+        !(item.name === itemName && item.image === itemImage)
+    );
+    
+    localStorage.setItem('cart', JSON.stringify(cart));
+    loadCartItems(); // Refresh cart display
+}
+
+
+// Contact Form Handling

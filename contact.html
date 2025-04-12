@@ -58,15 +58,16 @@
     </section>
 
     <section id="form-details">
-        <form action="">
+        <form id="contact-form" action="send_email.php" method="POST">
             <span>LEAVE A MESSAGE</span>
             <h2>We love to hear from you</h2>
-            <input type="text" placeholder="Your Name">
-            <input type="email" placeholder="Your Email">
-            <input type="text" placeholder="Subject">
-            <textarea cols="30" rows="10" placeholder="Your Message"></textarea>
-            <button class="normal" type="submit">Submit</button>
+            <input type="text" name="name" placeholder="Your Name" required>
+            <input type="email" name="email" placeholder="Your Email" required>
+            <input type="text" name="subject" placeholder="Subject" required>
+            <textarea name="message" cols="30" rows="10" placeholder="Your Message" required></textarea>
+            <button id="submitbtn" class="normal" type="submit">Submit</button>
         </form>
+        <div id="form-message" style="display:none; margin-top:20px;"></div>
     </section>
 
     <section id="newsletter" class="section-p1 section-m1">
