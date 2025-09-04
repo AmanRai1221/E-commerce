@@ -32,6 +32,38 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
+    // Add to cart buttons event listeners for electronics section
+    for (let i = 1; i <= 16; i++) {
+        const btn = document.getElementById(`ecbtn${i}`);
+        if (btn) {
+            btn.addEventListener('click', function(e) {
+                e.preventDefault();
+                addToCart(this);
+            });
+        }
+    }
+
+    // Add to cart buttons event listeners for electronics2 section
+    for (let i = 1; i <= 16; i++) {
+        const btn = document.getElementById(`ec2btn${i}`);
+        if (btn) {
+            btn.addEventListener('click', function(e) {
+                e.preventDefault();
+                addToCart(this);
+            });
+        }
+    }
+    // Add to cart buttons event listeners for electronics3 section
+    for (let i = 1; i <= 16; i++) {
+        const btn = document.getElementById(`ec3btn${i}`);
+        if (btn) {
+            btn.addEventListener('click', function(e) {
+                e.preventDefault();
+                addToCart(this);
+            });
+        }
+    }
+
     // Load cart items on cart page
     if (document.getElementById('cart')) {
         loadCartItems();
@@ -40,8 +72,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
 function addToCart(button) {
     const productDiv = button.closest('.pro');
+    const imgSrc = productDiv.querySelector('img').src;
     const product = {
-        image: productDiv.querySelector('img').src.split('/').pop(),
+        image: imgSrc.split('img/')[1],
         name: productDiv.querySelector('h5').textContent,
         price: productDiv.querySelector('h4').textContent,
         quantity: 1
@@ -79,7 +112,7 @@ function loadCartItems() {
 
         row.innerHTML = `
             <td><a href="#" class="remove-item"><i class="fa-regular fa-circle-xmark"></i></a></td>
-            <td><img src="img/product/${item.image}"></td>
+            <td><img src="img/${item.image}"></td>
             <td>${item.name}</td>
             <td>${item.price}</td>
             <td><input type="number" value="${item.quantity}" min="1" class="quantity-input"></td>
@@ -121,16 +154,15 @@ function removeCartItem(e) {
     e.preventDefault();
     const row = e.target.closest('tr');
     const itemName = row.querySelector('td:nth-child(3)').textContent;
-    const itemImage = row.querySelector('td:nth-child(2) img').src.split('/').pop();
-    
+    const itemImage = row.querySelector('td:nth-child(2) img').src.split('img/')[1];
+
     let cart = JSON.parse(localStorage.getItem('cart'));
-    cart = cart.filter(item => 
+    cart = cart.filter(item =>
         !(item.name === itemName && item.image === itemImage)
     );
-    
+
     localStorage.setItem('cart', JSON.stringify(cart));
     loadCartItems(); // Refresh cart display
 }
-
 
 // Contact Form Handling
