@@ -3,66 +3,32 @@ const close = document.getElementById('close');
 const nav = document.getElementById('navbar');
 
 if (bar) {
-  bar.addEventListener('click', () => {
-    nav.classList.add('active');
-  })
+    bar.addEventListener('click', () => {
+        nav.classList.add('active');
+    })
 }
 if (close) {
-  close.addEventListener('click', () => {
-    nav.classList.remove('active');
-  })
+    close.addEventListener('click', () => {
+        nav.classList.remove('active');
+    })
 }
 
 // Cart functionality
 
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     // Initialize cart if not exists
     if (!localStorage.getItem('cart')) {
         localStorage.setItem('cart', JSON.stringify([]));
     }
 
-    // Add to cart buttons event listeners
-    for (let i = 1; i <= 16; i++) {
-        const btn = document.getElementById(`cbtn${i}`);
-        if (btn) {
-            btn.addEventListener('click', function(e) {
-                e.preventDefault();
-                addToCart(this);
-            });
-        }
-    }
-
-    // Add to cart buttons event listeners for electronics section
-    for (let i = 1; i <= 16; i++) {
-        const btn = document.getElementById(`ecbtn${i}`);
-        if (btn) {
-            btn.addEventListener('click', function(e) {
-                e.preventDefault();
-                addToCart(this);
-            });
-        }
-    }
-
-    // Add to cart buttons event listeners for electronics2 section
-    for (let i = 1; i <= 16; i++) {
-        const btn = document.getElementById(`ec2btn${i}`);
-        if (btn) {
-            btn.addEventListener('click', function(e) {
-                e.preventDefault();
-                addToCart(this);
-            });
-        }
-    }
-    // Add to cart buttons event listeners for electronics3 section
-    for (let i = 1; i <= 16; i++) {
-        const btn = document.getElementById(`ec3btn${i}`);
-        if (btn) {
-            btn.addEventListener('click', function(e) {
-                e.preventDefault();
-                addToCart(this);
-            });
-        }
-    }
+    // Add to cart buttons event listeners for all sections
+    const cartButtons = document.querySelectorAll('a[id^="cbtn"], a[id^="ecbtn"], a[id^="ec2btn"], a[id^="ec3btn"]');
+    cartButtons.forEach(btn => {
+        btn.addEventListener('click', function (e) {
+            e.preventDefault();
+            addToCart(this);
+        });
+    });
 
     // Load cart items on cart page
     if (document.getElementById('cart')) {
@@ -82,11 +48,11 @@ function addToCart(button) {
 
     let cart = JSON.parse(localStorage.getItem('cart'));
     // Compare both name and image to uniquely identify products
-    const existingItem = cart.find(item => 
-        item.name === product.name && 
+    const existingItem = cart.find(item =>
+        item.name === product.name &&
         item.image === product.image
     );
-    
+
     if (existingItem) {
         existingItem.quantity += 1;
     } else {
@@ -122,8 +88,10 @@ function loadCartItems() {
     });
 
     // Update subtotal
-    document.querySelector('#subtotal td:last-child').textContent = `Rs. ${subtotal}`;
-    document.querySelector('#subtotal strong:last-child').textContent = `Rs. ${subtotal}`;
+    const subtotalEl = document.querySelector('#subtotal td:last-child strong');
+    if (subtotalEl) {
+        subtotalEl.textContent = `Rs. ${subtotal}`;
+    }
 
     // Add event listeners for quantity changes and remove buttons
     document.querySelectorAll('.quantity-input').forEach(input => {
@@ -139,10 +107,10 @@ function updateCartItem(e) {
     const newQuantity = parseInt(e.target.value);
     const row = e.target.closest('tr');
     const itemName = row.querySelector('td:nth-child(3)').textContent;
-    
+
     let cart = JSON.parse(localStorage.getItem('cart'));
     const itemIndex = cart.findIndex(item => item.name === itemName);
-    
+
     if (itemIndex !== -1) {
         cart[itemIndex].quantity = newQuantity;
         localStorage.setItem('cart', JSON.stringify(cart));

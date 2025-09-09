@@ -46,15 +46,18 @@
                     <td>Subtotal</td>
                 </tr>
             </thead>
-            
-                <tr>
-                    <td><a id="rbtn" href="#"><i class="fa-regular fa-circle-xmark"></i></a></td>
-                    <td><img src="img/product/f2.jpg"></td>
-                    <td>Cartoon Astronaut T-Shirts</td>
-                    <td>Rs. 390</td>
-                    <td><input type="number" value="1"></td>
-                    <td>Rs. 390</td>
+            <tbody>
+            </tbody>
+            <tfoot>
+                <tr id="subtotal">
+                    <td colspan="5"><strong>Subtotal</strong></td>
+                    <td><strong>Rs. 0</strong></td>
                 </tr>
+            </tfoot>
+        </table>
+        <div style="text-align: right; margin-top: 10px;">
+            <button onclick="if (confirm('Proceed to buy these items?')) { alert('Order placed successfully!'); clearCart(); location.reload(); }" style="background-color: green; color: white; padding: 10px 20px; border: none; border-radius: 5px; font-size: 16px; cursor: pointer;">Buy</button>
+        </div>
     </section>
             
     <footer class="section-p1">
